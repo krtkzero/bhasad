@@ -1,3 +1,5 @@
+// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useState, useEffect, useRef } from 'react'
 import tt from '@tomtom-international/web-sdk-maps'
 import '@tomtom-international/web-sdk-maps/dist/maps.css'
@@ -58,7 +60,6 @@ function App() {
   const markerRef = useRef<tt.Marker | null>(null)
   const [showCard, setShowCard] = useState(false)
   const [cardImage, setCardImage] = useState<string | null>(null)
-  const [isImageLoading, setIsImageLoading] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const [newsBhasad, setNewsBhasad] = useState<{score: number, articles: {title: string, url: string}[]}>({score: 0, articles: []})
 
@@ -323,8 +324,8 @@ function App() {
   // Get Bhasadmon image based on score
   const getBhasadmonImage = (score: number) => {
     // Round score to nearest integer between 1-10
-    const roundedScore = Math.min(Math.max(Math.round(score), 1), 10)
-    return `/bhasadmon/${roundedScore}.png`
+    const roundedScore = Math.min(Math.max(Math.round(score), 1), 10);
+    return `${import.meta.env.BASE_URL}bhasadmon/${roundedScore}.png`;
   }
 
   // Generate image when card is shown
@@ -489,9 +490,7 @@ function App() {
               overflow: 'hidden',
               position: 'relative'
             }}>
-              {isImageLoading ? (
-                <span style={{fontSize: 18, color: '#78350f'}}>Loading...</span>
-              ) : cardImage ? (
+              {cardImage ? (
                 <img 
                   src={cardImage} 
                   alt={`Bhasadmon Level ${Math.round(chaosScore.score)}`} 
