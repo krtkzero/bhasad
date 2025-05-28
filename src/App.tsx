@@ -5,6 +5,8 @@ import tt from '@tomtom-international/web-sdk-maps'
 import '@tomtom-international/web-sdk-maps/dist/maps.css'
 import html2canvas from 'html2canvas'
 
+// Re-added secrets - triggering deployment
+
 // Add type declaration for Vite env variables
 // interface ImportMeta {
 //   env: {
