@@ -1,0 +1,38 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master # or main, depending on your default branch name
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🚀
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 🌱
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use a suitable Node.js version
+
+      - name: Install Dependencies 📦
+        run: npm ci # Using npm ci is recommended in CI environments
+
+      - name: Build with Secrets 🏗️
+        run: npm run build
+        env:
+          VITE_TOMTOM_KEY: ${{ secrets.VITE_TOMTOM_KEY }}
+          VITE_OPENWEATHER_KEY: ${{ secrets.VITE_OPENWEATHER_KEY }}
+          VITE_HUGGINGFACE_KEY: ${{ secrets.VITE_HUGGINGFACE_KEY }}
+          VITE_NEWSAPI_KEY: ${{ secrets.VITE_NEWSAPI_KEY }}
+          # Add other VITE_ prefix keys from your .env file here
+
+      - name: Deploy to GitHub Pages 🚀
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages 
