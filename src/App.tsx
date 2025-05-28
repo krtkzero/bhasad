@@ -4,16 +4,14 @@ import '@tomtom-international/web-sdk-maps/dist/maps.css'
 import html2canvas from 'html2canvas'
 
 // Add type declaration for Vite env variables
-declare global {
-  interface ImportMeta {
-    env: {
-      VITE_TOMTOM_KEY: string
-      VITE_OPENWEATHER_KEY: string
-      VITE_HUGGINGFACE_KEY: string
-      VITE_NEWSAPI_KEY: string
-    }
-  }
-}
+// interface ImportMeta {
+//   env: {
+//     VITE_TOMTOM_KEY: string
+//     VITE_OPENWEATHER_KEY: string
+//     VITE_HUGGINGFACE_KEY: string
+//     VITE_NEWSAPI_KEY: string
+//   }
+// }
 
 interface Location {
   lat: number;
@@ -40,7 +38,7 @@ const languages = [
   { code: 'mr', text: 'गोंधळ गुण' },
   { code: 'te', text: 'గందరగోళ స్కోర్' },
   { code: 'kn', text: 'ಗದ್ದಲ ಸ್ಕೋರ್' },
-  { code: 'ml', text: 'കുഴപ്പം സ്കോർ' },
+  { code: 'ml', text: 'കു്പം സ്കോർ' },
   { code: 'pa', text: 'ਭਸੜ ਸਕੋਰ' },
   { code: 'gu', text: 'ભસડ સ્કોર' }
 ]
@@ -139,15 +137,15 @@ function App() {
         const geoData = await geoRes.json()
         city = geoData.address.city || geoData.address.town || geoData.address.village || ''
         state = geoData.address.state || ''
-      } catch {}
+      } catch {} // ignore geo-coding errors, news fetch can proceed
       // Build query: always include 'local news' for more local relevance
       let query = ''
       if (city && state && !city.toLowerCase().includes(state.toLowerCase())) {
-        query = `${city} ${state} local news`
+        query = city + ' ' + state + ' local news'
       } else if (city) {
-        query = `${city} local news`
+        query = city + ' local news'
       } else if (state) {
-        query = `${state} local news`
+        query = state + ' local news'
       } else {
         query = 'India local news'
       }
@@ -306,7 +304,7 @@ function App() {
 
   // Bhasadmon names based on chaos level
   const getBhasadmonName = (score: number) => {
-    const names = {
+    const names: { [key: number]: string } = {
       1: "Chillmon - The Zen Master",
       2: "Peacemon - The Serene One",
       3: "Calmmon - The Cool Cat",
@@ -319,7 +317,7 @@ function App() {
       10: "Bhasadmon - The Legendary Chaos Lord"
     }
     const roundedScore = Math.min(Math.max(Math.round(score), 1), 10)
-    return names[roundedScore as keyof typeof names]
+    return names[roundedScore]
   }
 
   // Get Bhasadmon image based on score
@@ -545,4 +543,4 @@ function App() {
   )
 }
 
-export default App 
+export default App
