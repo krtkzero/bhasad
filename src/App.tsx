@@ -150,24 +150,32 @@ function App() {
       } else if (state) {
         query = state + ' local news'
       } else {
-        query = 'India local news'
+        query = 'India local news' // Fallback to India news if location is vague
       }
-      // Fetch news
-      const newsRes = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&apiKey=${import.meta.env.VITE_NEWSAPI_KEY}&language=en&sortBy=publishedAt&pageSize=10`)
+
+      // Fetch news from TheNewsAPI.com
+      const newsRes = await fetch(`https://api.thenewsapi.com/v1/news/all?search=${encodeURIComponent(query)}&api_token=${import.meta.env.VITE_NEWSAPI_KEY}&language=en&limit=10`)
       const newsData = await newsRes.json()
+
       const bhasadKeywords = ['accident','flood','protest','strike','jam','chaos','disaster','alert','rain','storm','violence','blockade','shutdown','curfew','fire','collapse','crash','riot','emergency','warning']
-      const relevantArticles = (newsData.articles || []).filter((article: any) =>
+
+      // Filter relevant articles and extract title and URL
+      const relevantArticles = (newsData.data || []).filter((article: any) =>
         bhasadKeywords.some(word =>
           (article.title && article.title.toLowerCase().includes(word)) ||
-          (article.description && article.description.toLowerCase().includes(word))
+          (article.snippet && article.snippet.toLowerCase().includes(word)) // Use snippet as description might not be available
         )
-      )
+      ).map((a: any) => ({title: a.title, url: a.url}))
+
       setNewsBhasad({
         score: Math.min(relevantArticles.length, 3),
-        articles: relevantArticles.slice(0, 2).map((a: any) => ({title: a.title, url: a.url}))
+        articles: relevantArticles.slice(0, 2)
       })
+      
       return Math.min(relevantArticles.length, 3)
+
     } catch (e) {
+      console.error('Error fetching news bhasad:', e)
       setNewsBhasad({score: 0, articles: []})
       return 0
     }
